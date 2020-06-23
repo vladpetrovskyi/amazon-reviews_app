@@ -3,7 +3,6 @@ package com.vp.amazonreviewsapp.service.impl;
 import com.vp.amazonreviewsapp.model.Review;
 import com.vp.amazonreviewsapp.repository.ReviewRepository;
 import com.vp.amazonreviewsapp.service.ReviewService;
-import com.vp.amazonreviewsapp.controller.CSVParserImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
