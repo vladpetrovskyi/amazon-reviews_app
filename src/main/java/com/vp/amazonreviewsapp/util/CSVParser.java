@@ -1,4 +1,4 @@
-package com.vp.amazonreviewsapp.controller;
+package com.vp.amazonreviewsapp.util;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -24,31 +24,31 @@ import java.util.TimeZone;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Component;
 
-@Controller
+@Component
 @AllArgsConstructor
-public class CSVParser {
+public class CSVParser implements Parser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVParser.class);
-    private static final String CSV_FILE =
-            "/Users/vlad/IdeaProjects/amazon-reviews-app/src/main/resources/Reviews.csv";
 
     private final UserService userService;
     private final ProductService productService;
     private final ReviewService reviewService;
     private final RoleService roleService;
 
-    @GetMapping(value = "/init")
-    public void parseData() {
+    public void parseData(String path) {
         Set<User> users = new HashSet<>();
         Set<Product> products = new HashSet<>();
         List<Review> reviews = new ArrayList<>();
 
         injectRoles();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(CSV_FILE))) {
+        User admin = new User();
+        admin.setProfileName("admin");
+        admin.setRoles(Set.of(roleService.getRoleByName("ADMIN")));
+
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             CsvParserSettings settings = new CsvParserSettings();
             settings.setMaxCharsPerColumn(1000000);
             settings.setNumberOfRowsToSkip(1);
@@ -71,10 +71,6 @@ public class CSVParser {
         } catch (IOException e) {
             throw new ParsingException("Failed to parse the input file.", e);
         }
-
-        User admin = new User();
-        admin.setProfileName("admin");
-        admin.setRoles(Set.of(roleService.getRoleByName("ADMIN")));
     }
 
     private void injectRoles() {

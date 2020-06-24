@@ -24,11 +24,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public Review add(Review review) {
-        return reviewRepository.saveAndFlush(review);
-    }
-
-    @Override
     public void addAll(List<Review> reviews) {
         int counter = 0;
         while (counter < reviews.size() && reviews.size() >= 1000) {
@@ -43,12 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> getAll() {
-        return reviewRepository.findAll();
-    }
-
-    @Override
-    public List<String> getMostUsedWords(Long limit) {
+    public List<String> getWordsSortedByUsage() {
         List<String> words = reviewRepository.findAll().stream()
                 .flatMap(review ->
                         Arrays.stream(
@@ -65,11 +55,7 @@ public class ReviewServiceImpl implements ReviewService {
             wordsIterator.remove();
         }
 
-        return sortByValue(wordOccurrences)
-                .keySet()
-                .stream()
-                .limit(limit)
-                .collect(Collectors.toList());
+        return new ArrayList<>(sortByValue(wordOccurrences).keySet());
     }
 
     private <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {

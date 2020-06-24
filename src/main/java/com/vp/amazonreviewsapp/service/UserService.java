@@ -8,5 +8,5 @@ public interface UserService {
 
     void addAll(Iterable<User> users);
 
-    List<String> getMostActiveUsers(Long limit);
+    List<User> getMostActiveUsers();
 }

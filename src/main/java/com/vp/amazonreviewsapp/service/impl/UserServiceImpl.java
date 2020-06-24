@@ -25,12 +25,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<String> getMostActiveUsers(Long limit) {
+    public List<User> getMostActiveUsers() {
         return userRepository.findAll()
                 .stream()
                 .sorted((u1, u2) -> u2.getReviews().size() - u1.getReviews().size())
-                .map(User::getUserId)
-                .limit(limit)
                 .collect(Collectors.toList());
     }
 }
