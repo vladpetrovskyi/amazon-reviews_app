@@ -31,6 +31,7 @@ public class Review {
     private Integer score;
     private LocalDateTime time;
     private String summary;
+
     @Lob
     @Column
     private String text;
