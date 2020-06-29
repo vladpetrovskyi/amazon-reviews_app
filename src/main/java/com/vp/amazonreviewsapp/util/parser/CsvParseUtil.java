@@ -34,15 +34,14 @@ public class CsvParseUtil implements Parser {
         Set<User> users = new HashSet<>();
         Set<Product> products = new HashSet<>();
         List<Review> reviews = new ArrayList<>();
-
-        List<Role> roles = dbInjector.injectRoles();
-
-        dbInjector.injectAdmin();
+        List<Role> roles;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             CsvParserSettings settings = new CsvParserSettings();
             settings.setMaxCharsPerColumn(1000000);
             settings.setNumberOfRowsToSkip(1);
+
+            roles = new ArrayList<>(dbInjector.injectRoles());
 
             Set<Role> role = Set.of(roleService.getRoleByName("USER"));
 
@@ -57,14 +56,16 @@ public class CsvParseUtil implements Parser {
                 reviews.add(mapper.getReviewFromEntry(entry, user, product));
             }
             logger.info("Finished parsing.");
-
-            List<List<?>> returnList = dbInjector.addToDb(users, products, reviews);
-            logger.info("Finished inserting all entries into DB.");
-
-            returnList.add(roles);
-            return returnList;
         } catch (IOException e) {
             throw new ParsingException("Failed to parse the input file.", e);
         }
+        dbInjector.injectAdmin();
+
+        logger.info("Starting inserting all entries into DB.");
+        List<List<?>> returnList = dbInjector.addToDb(users, products, reviews);
+        logger.info("Finished inserting all entries into DB.");
+
+        returnList.add(roles);
+        return returnList;
     }
 }

@@ -35,11 +35,11 @@ public class DbInjector {
     public List<List<?>> addToDb(Set<User> users, Set<Product> products, List<Review> reviews) {
         List<List<?>> returnList = new ArrayList<>();
 
-        returnList.add(userService.addAll(users));
-        logger.info("Finished inserting users into DB.");
-
         returnList.add(productService.addAll(products));
         logger.info("Finished inserting products into DB.");
+
+        returnList.add(userService.addAll(users));
+        logger.info("Finished inserting users into DB.");
 
         returnList.add(reviewService.addAll(reviews));
         logger.info("Finished inserting reviews into DB.");
