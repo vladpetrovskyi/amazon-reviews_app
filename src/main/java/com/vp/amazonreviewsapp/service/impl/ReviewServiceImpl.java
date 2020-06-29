@@ -1,72 +1,61 @@
 package com.vp.amazonreviewsapp.service.impl;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset;
 import com.vp.amazonreviewsapp.model.Review;
 import com.vp.amazonreviewsapp.repository.ReviewRepository;
 import com.vp.amazonreviewsapp.service.ReviewService;
+import com.vp.amazonreviewsapp.service.supplement.BatchInserter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewServiceImpl.class);
     private final ReviewRepository reviewRepository;
+    private final BatchInserter<Review> batchInserter;
+    private List<String> sortedWords;
 
     @Override
-    public void addAll(List<Review> reviews) {
-        int counter = 0;
-        while (counter < reviews.size() && reviews.size() >= 1000) {
-            reviewRepository.saveAll(reviews.subList(counter, counter + 1000));
-            counter += 1000;
-            if (counter % 10000 == 0) {
-                LOGGER.info("Added new 10000 entries batch.");
-            }
+    public List<Review> addAll(List<Review> reviews) {
+        sortedWords = null;
+        List<CompletableFuture<List<Review>>> futures = new ArrayList<>();
+        for (List<Review> reviewList : Lists.partition(reviews, 1000)) {
+            futures.add(batchInserter.insertBatch(reviewList));
         }
-        reviewRepository.saveAll(
-                reviews.subList(counter > 1000 ? counter - 1000 : 0, reviews.size()));
+        return futures.stream()
+                .flatMap(f -> f.join().parallelStream())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getWordsSortedByUsage() {
-        List<String> words = reviewRepository.findAll().stream()
-                .flatMap(review ->
-                        Arrays.stream(
-                                review.getText()
-                                        .replaceAll("\\W", " ")
-                                        .toLowerCase()
-                                        .split(" ")))
-                .collect(Collectors.toList());
-        Iterator<String> wordsIterator = words.iterator();
-        Map<String, Integer> wordOccurrences = new HashMap<>();
-        while (wordsIterator.hasNext()) {
-            String word = wordsIterator.next();
-            wordOccurrences.put(word, wordOccurrences.getOrDefault(word, 0) + 1);
-            wordsIterator.remove();
+        if (sortedWords == null) {
+            Multiset<String> words = reviewRepository.getAllText().join()
+                    .parallelStream()
+                    .flatMap(text ->
+                            Arrays.stream(text.toLowerCase()
+                                    .replaceAll("[^a-z'\\-]", " ")
+                                    .split("\\s+")))
+                    .collect(Collectors.toCollection(HashMultiset::create));
+
+            sortedWords = words.entrySet().parallelStream()
+                    .sorted(Comparator.comparingInt(
+                            (ToIntFunction<Multiset.Entry<String>>) Multiset.Entry::getCount)
+                            .reversed()
+                            .thenComparing(Multiset.Entry::getElement))
+                    .map(Multiset.Entry::getElement)
+                    .collect(Collectors.toList());
         }
-
-        return new ArrayList<>(sortByValue(wordOccurrences).keySet());
-    }
-
-    private <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
-        list.sort(Map.Entry.comparingByValue());
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result;
+        return sortedWords;
     }
 }

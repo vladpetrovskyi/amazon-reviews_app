@@ -4,8 +4,9 @@ import com.vp.amazonreviewsapp.model.User;
 import com.vp.amazonreviewsapp.repository.UserRepository;
 import com.vp.amazonreviewsapp.service.UserService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,20 +16,27 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    public User add(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
     public User getById(String id) {
         return userRepository.findById(id).orElseThrow();
     }
 
     @Override
-    public void addAll(Iterable<User> users) {
-        userRepository.saveAll(users);
+    public List<User> addAll(Iterable<User> users) {
+        return userRepository.saveAll(users);
     }
 
     @Override
-    public List<User> getMostActiveUsers() {
-        return userRepository.findAll()
-                .stream()
-                .sorted((u1, u2) -> u2.getReviews().size() - u1.getReviews().size())
-                .collect(Collectors.toList());
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }

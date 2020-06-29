@@ -4,8 +4,9 @@ import com.vp.amazonreviewsapp.model.Product;
 import com.vp.amazonreviewsapp.repository.ProductRepository;
 import com.vp.amazonreviewsapp.service.ProductService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,15 +21,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addAll(Iterable<Product> products) {
-        productRepository.saveAll(products);
+    public List<Product> addAll(Iterable<Product> products) {
+        return productRepository.saveAll(products);
     }
 
     @Override
-    public List<Product> getProductsSortedByMentions() {
-        return productRepository.findAll()
-                .stream()
-                .sorted((p1, p2) -> p2.getReviews().size() - p1.getReviews().size())
-                .collect(Collectors.toList());
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 }
