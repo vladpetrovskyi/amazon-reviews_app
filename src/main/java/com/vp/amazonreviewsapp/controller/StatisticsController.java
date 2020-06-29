@@ -1,7 +1,7 @@
 package com.vp.amazonreviewsapp.controller;
 
-import com.vp.amazonreviewsapp.model.Product;
-import com.vp.amazonreviewsapp.model.User;
+import com.vp.amazonreviewsapp.model.dto.ProductResponseDto;
+import com.vp.amazonreviewsapp.model.dto.UserResponseDto;
 import com.vp.amazonreviewsapp.service.ProductService;
 import com.vp.amazonreviewsapp.service.ReviewService;
 import com.vp.amazonreviewsapp.service.UserService;
@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,24 +29,27 @@ public class StatisticsController {
             @RequestParam(required = false, defaultValue = "25") Integer limit,
             @RequestParam(required = false, defaultValue = "0") Integer page) {
         List<String> mostUsedWords = reviewService.getWordsSortedByUsage();
-        return new PageImpl<>(mostUsedWords, PageRequest.of(page, limit), mostUsedWords.size());
+        List<String> wordsSublist = mostUsedWords.subList((page - 1) * limit, (page * limit) - 1);
+        return new PageImpl<>(wordsSublist, PageRequest.of(page, limit), mostUsedWords.size());
     }
 
     @GetMapping("/products")
-    public Page<Product> getMostCommentedProducts(
+    public Page<ProductResponseDto> getMostCommentedProducts(
             @RequestParam(required = false, defaultValue = "25") Integer limit,
             @RequestParam(required = false, defaultValue = "0") Integer page) {
-        List<Product> mostCommentedProducts = productService.getProductsSortedByMentions();
-        return new PageImpl<>(
-                mostCommentedProducts, PageRequest.of(page, limit), mostCommentedProducts.size());
+        Pageable pageable = PageRequest.of(page, limit,
+                Sort.by(Sort.Order.desc("reviewsSize"), Sort.Order.asc("productId")));
+        return productService.findAll(pageable).map(
+                product -> new ProductResponseDto(product.getProductId()));
     }
 
     @GetMapping("/users")
-    public Page<User> getMostActiveUsers(
+    public Page<UserResponseDto> getMostActiveUsers(
             @RequestParam(required = false, defaultValue = "25") Integer limit,
             @RequestParam(required = false, defaultValue = "0") Integer page) {
-        List<User> mostActiveUsers = userService.getMostActiveUsers();
-        return new PageImpl<>(
-                mostActiveUsers, PageRequest.of(page, limit), mostActiveUsers.size());
+        Pageable pageable = PageRequest.of(page, limit,
+                Sort.by(Sort.Order.desc("reviewsSize"), Sort.Order.asc("userId")));
+        return userService.findAll(pageable).map(
+                user -> new UserResponseDto(user.getUserId(), user.getProfileName()));
     }
 }
