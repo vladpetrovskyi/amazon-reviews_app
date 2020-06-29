@@ -11,7 +11,6 @@ import com.vp.amazonreviewsapp.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
