@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserResponseDto {
+public class AwsUserResponseDto {
     private String id;
     private String profileName;
 }
