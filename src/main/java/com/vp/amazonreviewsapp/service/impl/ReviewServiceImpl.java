@@ -21,8 +21,13 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
+    private static final String NOT_WORD = "[^a-z'\\-]";
+    private static final String SPACES_REGEX = "\\s+";
+    private static final String SPACE = " ";
+
     private final ReviewRepository reviewRepository;
     private final BatchInserter<Review> batchInserter;
+
     private List<String> sortedWords;
 
     @Override
@@ -44,8 +49,8 @@ public class ReviewServiceImpl implements ReviewService {
                     .parallelStream()
                     .flatMap(text ->
                             Arrays.stream(text.toLowerCase()
-                                    .replaceAll("[^a-z'\\-]", " ")
-                                    .split("\\s+")))
+                                    .replaceAll(NOT_WORD, SPACE)
+                                    .split(SPACES_REGEX)))
                     .collect(Collectors.toCollection(HashMultiset::create));
 
             sortedWords = words.entrySet().parallelStream()
