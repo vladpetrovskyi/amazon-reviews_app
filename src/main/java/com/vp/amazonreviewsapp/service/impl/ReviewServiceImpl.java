@@ -3,7 +3,10 @@ package com.vp.amazonreviewsapp.service.impl;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
+import com.vp.amazonreviewsapp.exception.DataProcessingException;
+import com.vp.amazonreviewsapp.model.GenericUser;
 import com.vp.amazonreviewsapp.model.Review;
+import com.vp.amazonreviewsapp.model.User;
 import com.vp.amazonreviewsapp.repository.ReviewRepository;
 import com.vp.amazonreviewsapp.service.ReviewService;
 import com.vp.amazonreviewsapp.service.supplement.BatchInserter;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
@@ -62,5 +66,24 @@ public class ReviewServiceImpl implements ReviewService {
                     .collect(Collectors.toList());
         }
         return sortedWords;
+    }
+
+    @Override
+    public void delete(Long id) throws DataProcessingException {
+        Optional<Review> optionalReview = reviewRepository.findById(id);
+        if (optionalReview.isEmpty()) {
+            throw new DataProcessingException("No review with the given ID was found: " + id);
+        }
+        reviewRepository.delete(optionalReview.get());
+    }
+
+    @Override
+    public Review add(Review review) {
+        return reviewRepository.save(review);
+    }
+
+    @Override
+    public List<Review> getByUser(GenericUser user) {
+        return reviewRepository.getAllByUser(user);
     }
 }

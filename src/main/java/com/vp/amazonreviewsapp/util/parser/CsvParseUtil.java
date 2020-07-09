@@ -6,8 +6,6 @@ import com.vp.amazonreviewsapp.exception.ParsingException;
 import com.vp.amazonreviewsapp.model.AwsUser;
 import com.vp.amazonreviewsapp.model.Product;
 import com.vp.amazonreviewsapp.model.Review;
-import com.vp.amazonreviewsapp.model.Role;
-import com.vp.amazonreviewsapp.service.RoleService;
 import com.vp.amazonreviewsapp.util.parser.supplement.DbInjector;
 import com.vp.amazonreviewsapp.util.parser.supplement.EntryToEntityMapper;
 import java.io.BufferedReader;
@@ -53,7 +51,6 @@ public class CsvParseUtil implements Parser {
         } catch (IOException e) {
             throw new ParsingException("Failed to parse the input file.", e);
         }
-        dbInjector.injectAdmin();
 
         logger.info("Starting inserting all entries into DB.");
         List<List<?>> returnList = dbInjector.addToDb(awsUsers, products, reviews);

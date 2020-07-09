@@ -1,10 +1,11 @@
 package com.vp.amazonreviewsapp.controller;
 
-import com.vp.amazonreviewsapp.model.dto.AwsUserResponseDto;
-import com.vp.amazonreviewsapp.model.dto.ProductResponseDto;
-import com.vp.amazonreviewsapp.service.AwsUserService;
+import com.vp.amazonreviewsapp.model.AwsUser;
+import com.vp.amazonreviewsapp.model.dto.response.AwsUserResponseDto;
+import com.vp.amazonreviewsapp.model.dto.response.ProductResponseDto;
 import com.vp.amazonreviewsapp.service.ProductService;
 import com.vp.amazonreviewsapp.service.ReviewService;
+import com.vp.amazonreviewsapp.service.UserService;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,16 +14,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/statistics")
 public class StatisticsController {
 
     private final ReviewService reviewService;
     private final ProductService productService;
-    private final AwsUserService awsUserService;
+    private final UserService<AwsUser> awsUserService;
 
     @GetMapping("/words")
     public Page<String> getMostUsedWords(
@@ -50,6 +53,6 @@ public class StatisticsController {
         Pageable pageable = PageRequest.of(page, limit,
                 Sort.by(Sort.Order.desc("reviewsSize"), Sort.Order.asc("userId")));
         return awsUserService.findAll(pageable).map(
-                user -> new AwsUserResponseDto(user.getUserId(), user.getProfileName()));
+                user -> new AwsUserResponseDto(user.getId(), user.getProfileName()));
     }
 }

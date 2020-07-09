@@ -24,8 +24,8 @@ public class Review {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "awsUser_id", nullable = false)
-    private AwsUser awsUser;
+    @JoinColumn(name = "user_id", nullable = false)
+    private GenericUser user;
     private Integer helpfulnessNumerator;
     private Integer helpfulnessDenominator;
     private Integer score;

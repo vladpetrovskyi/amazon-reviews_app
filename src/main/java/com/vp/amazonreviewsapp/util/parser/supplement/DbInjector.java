@@ -3,12 +3,9 @@ package com.vp.amazonreviewsapp.util.parser.supplement;
 import com.vp.amazonreviewsapp.model.AwsUser;
 import com.vp.amazonreviewsapp.model.Product;
 import com.vp.amazonreviewsapp.model.Review;
-import com.vp.amazonreviewsapp.model.Role;
-import com.vp.amazonreviewsapp.model.User;
-import com.vp.amazonreviewsapp.service.AwsUserService;
 import com.vp.amazonreviewsapp.service.ProductService;
 import com.vp.amazonreviewsapp.service.ReviewService;
-import com.vp.amazonreviewsapp.service.RoleService;
+import com.vp.amazonreviewsapp.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -21,12 +18,9 @@ import org.springframework.stereotype.Component;
 public class DbInjector {
 
     private final Logger logger;
-    private final RoleService roleService;
-    private final AwsUserService awsUserService;
+    private final UserService<AwsUser> awsUserService;
     private final ProductService productService;
     private final ReviewService reviewService;
-
-
 
     public List<List<?>> addToDb(Set<AwsUser> awsUsers, Set<Product> products, List<Review> reviews) {
         List<List<?>> returnList = new ArrayList<>();
@@ -42,6 +36,4 @@ public class DbInjector {
 
         return returnList;
     }
-
-
 }

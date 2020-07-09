@@ -1,7 +1,7 @@
 package com.vp.amazonreviewsapp.service.impl;
 
-import com.vp.amazonreviewsapp.model.AwsUser;
-import com.vp.amazonreviewsapp.repository.AwsUserRepository;
+import com.vp.amazonreviewsapp.model.User;
+import com.vp.amazonreviewsapp.repository.UserRepository;
 import com.vp.amazonreviewsapp.service.UserService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,37 +11,36 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class AwsUserServiceImpl implements UserService<AwsUser> {
+public class UserServiceImpl implements UserService<User> {
 
-    private final AwsUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public AwsUser add(AwsUser awsUser) {
-        return userRepository.save(awsUser);
+    public User add(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public AwsUser getById(String id) {
+    public User getById(String id) {
         return userRepository.findById(id).orElseThrow();
     }
 
-    @Override
-    public AwsUser getByProfileName(String profileName) {
+    public User getByProfileName(String profileName) {
         return userRepository.findByProfileName(profileName).orElseThrow();
     }
 
     @Override
-    public List<AwsUser> addAll(Iterable<AwsUser> users) {
+    public List<User> addAll(Iterable<User> users) {
         return userRepository.saveAll(users);
     }
 
     @Override
-    public Page<AwsUser> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @Override
-    public List<AwsUser> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 }
