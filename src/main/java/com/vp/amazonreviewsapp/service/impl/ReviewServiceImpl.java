@@ -6,7 +6,6 @@ import com.google.common.collect.Multiset;
 import com.vp.amazonreviewsapp.exception.DataProcessingException;
 import com.vp.amazonreviewsapp.model.GenericUser;
 import com.vp.amazonreviewsapp.model.Review;
-import com.vp.amazonreviewsapp.model.User;
 import com.vp.amazonreviewsapp.repository.ReviewRepository;
 import com.vp.amazonreviewsapp.service.ReviewService;
 import com.vp.amazonreviewsapp.service.supplement.BatchInserter;

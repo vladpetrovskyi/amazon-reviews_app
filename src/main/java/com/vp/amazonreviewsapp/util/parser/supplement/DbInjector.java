@@ -22,7 +22,9 @@ public class DbInjector {
     private final ProductService productService;
     private final ReviewService reviewService;
 
-    public List<List<?>> addToDb(Set<AwsUser> awsUsers, Set<Product> products, List<Review> reviews) {
+    public List<List<?>> addToDb(Set<AwsUser> awsUsers,
+                                 Set<Product> products,
+                                 List<Review> reviews) {
         List<List<?>> returnList = new ArrayList<>();
 
         returnList.add(productService.addAll(products));

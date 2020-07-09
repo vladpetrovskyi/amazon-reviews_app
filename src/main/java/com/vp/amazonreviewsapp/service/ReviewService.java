@@ -3,7 +3,6 @@ package com.vp.amazonreviewsapp.service;
 import com.vp.amazonreviewsapp.exception.DataProcessingException;
 import com.vp.amazonreviewsapp.model.GenericUser;
 import com.vp.amazonreviewsapp.model.Review;
-import com.vp.amazonreviewsapp.model.User;
 import java.util.List;
 
 public interface ReviewService {

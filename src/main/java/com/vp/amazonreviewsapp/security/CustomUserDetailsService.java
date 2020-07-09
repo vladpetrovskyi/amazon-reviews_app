@@ -1,10 +1,11 @@
 package com.vp.amazonreviewsapp.security;
 
+import static org.springframework.security.core.userdetails.User.withUsername;
+
 import com.vp.amazonreviewsapp.model.User;
 import com.vp.amazonreviewsapp.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User.UserBuilder;
-import static org.springframework.security.core.userdetails.User.withUsername;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
