@@ -6,7 +6,9 @@ import com.vp.amazonreviewsapp.model.User;
 import com.vp.amazonreviewsapp.model.dto.mapper.ItemMapper;
 import com.vp.amazonreviewsapp.model.dto.request.ReviewRequestDto;
 import com.vp.amazonreviewsapp.model.dto.response.ReviewResponseDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReviewMapper implements ItemMapper<Review, ReviewRequestDto, ReviewResponseDto> {
     @Override
     public Review toEntity(ReviewRequestDto dto) {
