@@ -1,12 +1,10 @@
 package com.vp.amazonreviewsapp.util.parser.supplement;
 
+import com.vp.amazonreviewsapp.model.AwsUser;
 import com.vp.amazonreviewsapp.model.Product;
 import com.vp.amazonreviewsapp.model.Review;
-import com.vp.amazonreviewsapp.model.Role;
-import com.vp.amazonreviewsapp.model.User;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.TimeZone;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +22,11 @@ public class EntryToEntityMapper {
     private static final int SUMMARY = 8;
     private static final int TEXT = 9;
 
-    public User getUserFromEntry(String[] entry, Set<Role> role) {
-        User user = new User();
-        user.setUserId(entry[USER_ID]);
-        user.setProfileName(entry[PROFILE_NAME]);
-        user.setRoles(role);
-        return user;
+    public AwsUser getUserFromEntry(String[] entry) {
+        AwsUser awsUser = new AwsUser();
+        awsUser.setId(entry[USER_ID]);
+        awsUser.setProfileName(entry[PROFILE_NAME]);
+        return awsUser;
     }
 
     public Product getProductFromEntry(String[] entry) {
@@ -38,11 +35,11 @@ public class EntryToEntityMapper {
         return product;
     }
 
-    public Review getReviewFromEntry(String[] entry, User user, Product product) {
+    public Review getReviewFromEntry(String[] entry, AwsUser awsUser, Product product) {
         Review review = new Review();
         review.setId(Long.parseLong(entry[REVIEW_ID]));
         review.setProduct(product);
-        review.setUser(user);
+        review.setUser(awsUser);
         review.setHelpfulnessNumerator(Integer.parseInt(entry[HELPFULNESS_NUMERATOR]));
         review.setHelpfulnessDenominator(Integer.parseInt(entry[HELPFULNESS_DENOMINATOR]));
         review.setScore(Integer.parseInt(entry[SCORE]));

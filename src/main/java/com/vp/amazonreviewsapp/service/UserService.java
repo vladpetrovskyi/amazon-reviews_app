@@ -1,18 +1,19 @@
 package com.vp.amazonreviewsapp.service;
 
-import com.vp.amazonreviewsapp.model.User;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface UserService {
-    User add(User user);
+public interface UserService<U> {
+    U add(U user);
 
-    User getById(String id);
+    U getById(String id);
 
-    List<User> addAll(Iterable<User> users);
+    U getByProfileName(String profileName);
 
-    Page<User> findAll(Pageable pageable);
+    List<U> addAll(Iterable<U> users);
 
-    List<User> findAll();
+    Page<U> findAll(Pageable pageable);
+
+    List<U> findAll();
 }

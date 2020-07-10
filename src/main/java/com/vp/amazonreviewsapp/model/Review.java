@@ -25,7 +25,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private GenericUser user;
     private Integer helpfulnessNumerator;
     private Integer helpfulnessDenominator;
     private Integer score;
